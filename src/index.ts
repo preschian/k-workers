@@ -68,7 +68,13 @@ export default {
           : await fetchIPFS.blob();
         const body = isJson ? JSON.stringify(bodyIPFS) : bodyIPFS;
 
-        context.waitUntil(env.MY_BUCKET.put(fileName, body));
+        context.waitUntil(
+          env.MY_BUCKET.put(fileName, body, {
+            httpMetadata: { contentType: contentType || undefined },
+          })
+        );
+
+        console.log({ statusCode, contentType, fileName });
 
         if (statusCode === 200) {
           return new Response(body, {
@@ -78,7 +84,11 @@ export default {
           });
         }
 
-        return Response.redirect(`${PUBLIC_GATEWAY}${url.pathname}`, 301);
+        if (url.pathname.length) {
+          return Response.redirect(`${PUBLIC_GATEWAY}${url.pathname}`, 301);
+        }
+
+        return new Response('Not found');
       }
 
       // Set the appropriate object headers
