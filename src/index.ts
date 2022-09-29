@@ -85,11 +85,18 @@ export default {
             });
           }
 
-          if (url.pathname.length) {
-            return Response.redirect(`${PUBLIC_GATEWAY}${url.pathname}`, 301);
-          }
+          // if (url.pathname.length) {
+          //   return Response.redirect(`${PUBLIC_GATEWAY}${url.pathname}`, 301);
+          // }
 
-          return new Response('Not found');
+          return new Response(
+            JSON.stringify({ statusCode, contentType, fileName }),
+            {
+              headers: {
+                'content-type': 'application/json;charset=UTF-8',
+              },
+            }
+          );
         }
 
         // Set the appropriate object headers
@@ -101,7 +108,7 @@ export default {
         // will limit the response to be in cache for 10 seconds max
         // Any changes made to the response here will be reflected in the cached value
         // headers.append('Cache-Control', 's-maxage=10');
-        headers.append('Cache-Control', 'public, max-age=31536000');
+        // headers.append('Cache-Control', 'public, max-age=31536000');
 
         response = new Response(object.body, {
           headers,
