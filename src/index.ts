@@ -19,7 +19,8 @@ export interface Env {
   MY_BUCKET: R2Bucket;
 }
 
-const PUBLIC_GATEWAY = 'https://kodadot.mypinata.cloud';
+// const PUBLIC_GATEWAY = 'https://kodadot.mypinata.cloud';
+const PUBLIC_GATEWAY = 'https://ipfs.io';
 
 type ResponseBody =
   'string | Blob | ReadableStream | ArrayBuffer | ArrayBufferView | null';
