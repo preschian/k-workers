@@ -19,6 +19,11 @@ export interface Env {
   MY_BUCKET: R2Bucket;
 }
 
+const PUBLIC_GATEWAY = 'https://kodadot.mypinata.cloud/ipfs';
+
+type ResponseBody =
+  'string | Blob | ReadableStream | ArrayBuffer | ArrayBufferView | null';
+
 export default {
   async fetch(
     request: Request,
@@ -50,7 +55,29 @@ export default {
       const objectKey = url.pathname.slice(1);
       const object = await env.MY_BUCKET.get(objectKey);
       if (object === null) {
-        return new Response('Object Not Found', { status: 404 });
+        // if (true) {
+        const fileName = url.pathname.substring(1);
+        const fetchIPFS = await fetch(PUBLIC_GATEWAY + url.pathname);
+        const contentType = fetchIPFS.headers.get('Content-Type');
+        const isJson = contentType === 'application/json';
+
+        const bodyIPFS: ResponseBody | Blob = isJson
+          ? await fetchIPFS.json()
+          : await fetchIPFS.blob();
+        const body = isJson ? JSON.stringify(bodyIPFS) : bodyIPFS;
+
+        context.waitUntil(env.MY_BUCKET.put(fileName, body));
+
+        console.log({ fileName, body, contentType });
+        return new Response(body, {
+          headers: {
+            'content-type': contentType || 'text/plain',
+          },
+        });
+        // console.log(url.pathname);
+        // console.log(fetchIPFS.headers.get('Content-Type'));
+        // console.log(pinataBody);
+        // return new Response('Object Not Found', { status: 404 });
       }
 
       // Set the appropriate object headers
