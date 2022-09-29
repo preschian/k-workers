@@ -16,41 +16,66 @@ export interface Env {
   // MY_DURABLE_OBJECT: DurableObjectNamespace;
   //
   // Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
-  // MY_BUCKET: R2Bucket;
-}
-
-const BUCKET_URL = 'https://assets.preschian.xyz';
-
-async function serveAsset(request: Request, ctx: ExecutionContext) {
-  const url = new URL(request.url);
-  const cache = caches.default;
-  let response = await cache.match(request);
-
-  if (!response) {
-    response = await fetch(`${BUCKET_URL}${url.pathname}`);
-    const headers = { 'cache-control': 'public, max-age=31536000' };
-    response = new Response(response.body, { ...response, headers });
-    ctx.waitUntil(cache.put(request, response.clone()));
-  }
-  return response;
+  MY_BUCKET: R2Bucket;
 }
 
 export default {
   async fetch(
     request: Request,
     env: Env,
-    ctx: ExecutionContext
+    context: ExecutionContext
   ): Promise<Response> {
-    if (request.method === 'GET') {
-      let response = await serveAsset(request, ctx);
-      if (response.status > 399) {
-        response = new Response(response.statusText, {
-          status: response.status,
-        });
+    try {
+      const url = new URL(request.url);
+
+      // Construct the cache key from the cache URL
+      const cacheKey = new Request(url.toString(), request);
+      const cache = caches.default;
+
+      // Check whether the value is already available in the cache
+      // if not, you will need to fetch it from R2, and store it in the cache
+      // for future access
+      let response = await cache.match(cacheKey);
+
+      if (response) {
+        console.log(`Cache hit for: ${request.url}.`);
+        return response;
       }
+
+      console.log(
+        `Response for request url: ${request.url} not present in cache. Fetching and caching request.`
+      );
+
+      // If not in cache, get it from R2
+      const objectKey = url.pathname.slice(1);
+      const object = await env.MY_BUCKET.get(objectKey);
+      if (object === null) {
+        return new Response('Object Not Found', { status: 404 });
+      }
+
+      // Set the appropriate object headers
+      const headers = new Headers();
+      object.writeHttpMetadata(headers);
+      headers.set('etag', object.httpEtag);
+
+      // Cache API respects Cache-Control headers. Setting s-max-age to 10
+      // will limit the response to be in cache for 10 seconds max
+      // Any changes made to the response here will be reflected in the cached value
+      // headers.append('Cache-Control', 's-maxage=10');
+      headers.append('Cache-Control', 'public, max-age=31536000');
+
+      response = new Response(object.body, {
+        headers,
+      });
+
+      // Store the fetched response as cacheKey
+      // Use waitUntil so you can return the response without blocking on
+      // writing to cache
+      context.waitUntil(cache.put(cacheKey, response.clone()));
+
       return response;
-    } else {
-      return new Response('Method not allowed', { status: 405 });
+    } catch (e) {
+      return new Response('Error thrown ' + (e as Error).message);
     }
   },
 };
