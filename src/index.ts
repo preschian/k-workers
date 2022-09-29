@@ -54,10 +54,12 @@ export default {
       // If not in cache, get it from R2
       const objectKey = url.pathname.slice(1);
       const object = await env.MY_BUCKET.get(objectKey);
+      // const object = null;
+
       if (object === null) {
-        // if (true) {
         const fileName = url.pathname.substring(1);
         const fetchIPFS = await fetch(PUBLIC_GATEWAY + url.pathname);
+        const statusCode = fetchIPFS.status;
         const contentType = fetchIPFS.headers.get('Content-Type');
         const isJson = contentType === 'application/json';
 
@@ -68,16 +70,15 @@ export default {
 
         context.waitUntil(env.MY_BUCKET.put(fileName, body));
 
-        console.log({ fileName, body, contentType });
-        return new Response(body, {
-          headers: {
-            'content-type': contentType || 'text/plain',
-          },
-        });
-        // console.log(url.pathname);
-        // console.log(fetchIPFS.headers.get('Content-Type'));
-        // console.log(pinataBody);
-        // return new Response('Object Not Found', { status: 404 });
+        if (statusCode === 200) {
+          return new Response(body, {
+            headers: {
+              'content-type': contentType || 'text/plain',
+            },
+          });
+        }
+
+        return Response.redirect(`${PUBLIC_GATEWAY}${url.pathname}`, 301);
       }
 
       // Set the appropriate object headers
