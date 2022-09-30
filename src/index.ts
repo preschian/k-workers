@@ -33,7 +33,7 @@ export default {
     try {
       const url = new URL(request.url);
 
-      if (url.pathname.includes('/ipfs/')) {
+      if (url.pathname.includes('/ipfs/') && request.method === 'GET') {
         // Construct the cache key from the cache URL
         const cacheKey = new Request(url.toString(), request);
         const cache = caches.default;
@@ -69,11 +69,17 @@ export default {
             : await fetchIPFS.blob();
           const body = isJson ? JSON.stringify(bodyIPFS) : bodyIPFS;
 
-          context.waitUntil(
-            env.MY_BUCKET.put(fileName, body, {
-              httpMetadata: { contentType: contentType || undefined },
-            })
-          );
+          // context.waitUntil(
+          //   fetch(
+          //     'http://localhost:8787/ipfs/bafybeig6clbsbabxkku3m4furbj4klayyx7ovwtcocmgwqmv4nxllnbxxy',
+          //     { method: 'PUT', body: body }
+          //   )
+          // );
+          // context.waitUntil(
+          //   env.MY_BUCKET.put(fileName, body, {
+          //     httpMetadata: { contentType: contentType || undefined },
+          //   })
+          // );
 
           console.log({ statusCode, contentType, fileName });
 
@@ -123,7 +129,19 @@ export default {
         return response;
       }
 
-      return new Response('Not found');
+      if (request.method === 'PUT') {
+        const object = await env.MY_BUCKET.put('test', request.body, {
+          httpMetadata: request.headers,
+        });
+        return new Response(null, {
+          headers: {
+            etag: object.httpEtag,
+          },
+        });
+      }
+
+      // return new Response('Not found');
+      return fetch(request.url);
     } catch (e) {
       return new Response('Error thrown ' + (e as Error).message);
     }
