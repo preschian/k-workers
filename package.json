@@ -1,14 +1,20 @@
 {
-  "name": "assets-cdn",
-  "version": "0.0.0",
-  "devDependencies": {
-    "@cloudflare/workers-types": "^3.16.0",
-    "typescript": "^4.8.4",
-    "wrangler": "2.1.9"
-  },
-  "private": true,
+  "name": "k-workers",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "wrangler dev",
-    "deploy": "wrangler publish"
-  }
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/preschian/k-workers.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/preschian/k-workers/issues"
+  },
+  "homepage": "https://github.com/preschian/k-workers#readme"
 }
