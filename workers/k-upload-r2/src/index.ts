@@ -32,11 +32,12 @@ export default {
       if (request.method === 'PUT' || request.method == 'POST') {
         console.log(url.pathname);
 
+        // TODO: skip if already exists
         const object = await env.MY_BUCKET.put(
           url.pathname.substring(1),
           request.body,
           {
-            httpMetadata: request.headers,
+            httpMetadata: request.headers, // TODO: handle application/json
           }
         );
 
