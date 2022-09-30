@@ -1,3 +1,8 @@
 name = "k-upload-r2"
 main = "src/index.ts"
 compatibility_date = "2022-09-30"
+
+[[r2_buckets]]
+binding = 'MY_BUCKET'
+bucket_name = 'ipfs-assets'
+preview_bucket_name = 'ipfs-assets-dev'

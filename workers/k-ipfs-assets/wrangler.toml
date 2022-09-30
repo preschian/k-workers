@@ -1,4 +1,4 @@
-name = "assets-cdn"
+name = "k-ipfs-assets"
 main = "src/index.ts"
 compatibility_date = "2022-09-30"
 

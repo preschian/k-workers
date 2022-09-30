@@ -9,22 +9,47 @@
  */
 
 export interface Env {
-	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
-	// MY_KV_NAMESPACE: KVNamespace;
-	//
-	// Example binding to Durable Object. Learn more at https://developers.cloudflare.com/workers/runtime-apis/durable-objects/
-	// MY_DURABLE_OBJECT: DurableObjectNamespace;
-	//
-	// Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
-	// MY_BUCKET: R2Bucket;
+  // Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
+  // MY_KV_NAMESPACE: KVNamespace;
+  //
+  // Example binding to Durable Object. Learn more at https://developers.cloudflare.com/workers/runtime-apis/durable-objects/
+  // MY_DURABLE_OBJECT: DurableObjectNamespace;
+  //
+  // Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
+  MY_BUCKET: R2Bucket;
 }
 
 export default {
-	async fetch(
-		request: Request,
-		env: Env,
-		ctx: ExecutionContext
-	): Promise<Response> {
-		return new Response("Hello World!");
-	},
+  async fetch(
+    request: Request,
+    env: Env,
+    context: ExecutionContext
+  ): Promise<Response> {
+    const url = new URL(request.url);
+    console.log({ url });
+
+    try {
+      if (request.method === 'PUT' || request.method == 'POST') {
+        console.log(url.pathname);
+
+        const object = await env.MY_BUCKET.put(
+          url.pathname.substring(1),
+          request.body,
+          {
+            httpMetadata: request.headers,
+          }
+        );
+
+        return new Response('success', {
+          headers: {
+            etag: object.httpEtag,
+          },
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    return new Response('Hello World!');
+  },
 };

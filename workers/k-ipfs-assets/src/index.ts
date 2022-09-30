@@ -55,10 +55,10 @@ export default {
         // If not in cache, get it from R2
         const objectKey = url.pathname.slice(1);
         const object = await env.MY_BUCKET.get(objectKey);
-        // const object = null;
+
+        console.log(objectKey, object);
 
         if (object === null) {
-          const fileName = url.pathname.substring(1);
           const fetchIPFS = await fetch(PUBLIC_GATEWAY + url.pathname);
           const statusCode = fetchIPFS.status;
           const contentType = fetchIPFS.headers.get('Content-Type');
@@ -69,19 +69,12 @@ export default {
             : await fetchIPFS.blob();
           const body = isJson ? JSON.stringify(bodyIPFS) : bodyIPFS;
 
-          // context.waitUntil(
-          //   fetch(
-          //     'http://localhost:8787/ipfs/bafybeig6clbsbabxkku3m4furbj4klayyx7ovwtcocmgwqmv4nxllnbxxy',
-          //     { method: 'PUT', body: body }
-          //   )
-          // );
-          // context.waitUntil(
-          //   env.MY_BUCKET.put(fileName, body, {
-          //     httpMetadata: { contentType: contentType || undefined },
-          //   })
-          // );
+          await fetch('https://upload-r2.preschian.xyz' + url.pathname, {
+            method: 'PUT',
+            body: body,
+          });
 
-          console.log({ statusCode, contentType, fileName });
+          console.log({ statusCode, contentType, objectKey });
 
           if (statusCode === 200) {
             return new Response(body, {
@@ -96,7 +89,7 @@ export default {
           // }
 
           return new Response(
-            JSON.stringify({ statusCode, contentType, fileName }),
+            JSON.stringify({ statusCode, contentType, objectKey }),
             {
               headers: {
                 'content-type': 'application/json;charset=UTF-8',
@@ -127,17 +120,6 @@ export default {
         context.waitUntil(cache.put(cacheKey, response.clone()));
 
         return response;
-      }
-
-      if (request.method === 'PUT') {
-        const object = await env.MY_BUCKET.put('test', request.body, {
-          httpMetadata: request.headers,
-        });
-        return new Response(null, {
-          headers: {
-            etag: object.httpEtag,
-          },
-        });
       }
 
       // return new Response('Not found');
