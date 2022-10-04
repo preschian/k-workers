@@ -33,8 +33,12 @@ export default {
     try {
       const url = new URL(request.url);
       const headers = new Headers();
+      headers.set('Access-Control-Allow-Origin', '*');
 
-      if (url.pathname.includes('/ipfs/') && request.method === 'GET') {
+      if (
+        url.pathname.includes('/ipfs/') &&
+        (request.method === 'GET' || request.method === 'HEAD')
+      ) {
         // Construct the cache key from the cache URL
         const cacheKey = new Request(url.toString(), request);
         const cache = caches.default;
@@ -79,7 +83,6 @@ export default {
           });
 
           console.log({ statusCode, contentType, objectKey });
-          headers.set('Access-Control-Allow-Origin', '*');
 
           if (statusCode === 200) {
             headers.set('Content-Type', contentType || 'text/plain');
