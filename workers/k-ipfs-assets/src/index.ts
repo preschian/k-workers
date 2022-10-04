@@ -32,6 +32,7 @@ export default {
   ): Promise<Response> {
     try {
       const url = new URL(request.url);
+      const headers = new Headers();
 
       if (url.pathname.includes('/ipfs/') && request.method === 'GET') {
         // Construct the cache key from the cache URL
@@ -78,38 +79,38 @@ export default {
           });
 
           console.log({ statusCode, contentType, objectKey });
+          headers.set('Access-Control-Allow-Origin', '*');
 
           if (statusCode === 200) {
+            headers.set('Content-Type', contentType || 'text/plain');
             return new Response(body, {
-              headers: {
-                'content-type': contentType || 'text/plain',
-              },
+              headers,
             });
           }
 
+          // TODO: enable fallback url when goes live
           // if (url.pathname.length) {
           //   return Response.redirect(`${PUBLIC_GATEWAY}${url.pathname}`, 301);
           // }
 
+          headers.set('Content-Type', 'application/json;charset=UTF-8');
           return new Response(
             JSON.stringify({ statusCode, contentType, objectKey }),
             {
-              headers: {
-                'content-type': 'application/json;charset=UTF-8',
-              },
+              headers,
               status: statusCode,
             }
           );
         }
 
         // Set the appropriate object headers
-        const headers = new Headers();
         object.writeHttpMetadata(headers);
         headers.set('etag', object.httpEtag);
 
         // Cache API respects Cache-Control headers. Setting s-max-age to 10
         // will limit the response to be in cache for 10 seconds max
         // Any changes made to the response here will be reflected in the cached value
+        // TODO: enable cache when goes live
         // headers.append('Cache-Control', 's-maxage=10');
         // headers.append('Cache-Control', 'public, max-age=31536000');
 
