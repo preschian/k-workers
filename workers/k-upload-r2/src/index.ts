@@ -32,20 +32,16 @@ export default {
       if (request.method === 'PUT' || request.method == 'POST') {
         console.log(url.pathname);
 
-        // TODO: skip if already exists
-        const object = await env.MY_BUCKET.put(
-          url.pathname.substring(1),
-          request.body,
-          {
-            httpMetadata: request.headers, // TODO: handle application/json
-          }
-        );
+        const objectKey = url.pathname.slice(1);
+        const object = await env.MY_BUCKET.get(objectKey);
 
-        return new Response('success', {
-          headers: {
-            etag: object.httpEtag,
-          },
-        });
+        if (!object) {
+          await env.MY_BUCKET.put(url.pathname.substring(1), request.body, {
+            httpMetadata: request.headers,
+          });
+        }
+
+        return new Response('success');
       }
     } catch (error) {
       console.log(error);

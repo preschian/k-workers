@@ -19,7 +19,9 @@ export interface Env {
   MY_BUCKET: R2Bucket;
 }
 
-const PUBLIC_GATEWAY = 'https://r2.infura-ipfs.io';
+const DEDICATED_GATEWAY = 'https://r2.infura-ipfs.io';
+const PINATA_GATEWAY = 'https://kodadot.mypinata.cloud';
+const UPLOAD_R2 = 'https://k-upload-r2.preschian-cdn.workers.dev';
 
 type ResponseBody =
   'string | Blob | ReadableStream | ArrayBuffer | ArrayBufferView | null';
@@ -65,10 +67,10 @@ export default {
         const objectKey = url.pathname.slice(1);
         const object = await env.MY_BUCKET.get(objectKey);
 
-        console.log(objectKey, object);
+        console.log({ objectKey, object });
 
         if (object === null) {
-          const fetchIPFS = await fetch(PUBLIC_GATEWAY + url.pathname);
+          const fetchIPFS = await fetch(DEDICATED_GATEWAY + url.pathname);
           const statusCode = fetchIPFS.status;
           const contentType = fetchIPFS.headers.get('Content-Type');
           const isJson = contentType === 'application/json';
@@ -78,27 +80,32 @@ export default {
             : await fetchIPFS.blob();
           const body = isJson ? JSON.stringify(bodyIPFS) : bodyIPFS;
 
-          await fetch('https://upload-r2.preschian.xyz' + url.pathname, {
-            method: 'PUT',
+          const uploadR2 = await fetch(UPLOAD_R2 + url.pathname, {
+            method: 'POST',
             body: body,
             headers: {
               'Content-Type': contentType || 'text/plain',
             },
           });
 
-          console.log({ statusCode, contentType, objectKey });
+          console.log({
+            statusCode,
+            contentType,
+            objectKey,
+            'r2-status': uploadR2.status,
+          });
 
-          if (statusCode === 200) {
+          if (statusCode === 200 && contentType?.includes('text/plain')) {
             headers.set('Content-Type', contentType || 'text/plain');
             return new Response(body, {
               headers,
             });
           }
 
-          // TODO: enable fallback url when goes live
-          // if (url.pathname.length) {
-          //   return Response.redirect(`${PUBLIC_GATEWAY}${url.pathname}`, 301);
-          // }
+          // fallback to pinata
+          if (url.pathname.length) {
+            return Response.redirect(`${PINATA_GATEWAY}${url.pathname}`, 302);
+          }
 
           headers.set('Content-Type', 'application/json;charset=UTF-8');
           return new Response(
