@@ -95,7 +95,8 @@ export default {
             'r2-status': uploadR2.status,
           });
 
-          if (statusCode === 200 && contentType?.includes('text/plain')) {
+          // TODO: what is the respone status from infura if bandwidth reached the limit?
+          if (statusCode === 200) {
             headers.set('Content-Type', contentType || 'text/plain');
             return new Response(body, {
               headers,
