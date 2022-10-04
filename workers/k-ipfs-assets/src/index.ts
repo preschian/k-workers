@@ -72,6 +72,9 @@ export default {
           await fetch('https://upload-r2.preschian.xyz' + url.pathname, {
             method: 'PUT',
             body: body,
+            headers: {
+              'Content-Type': contentType || 'text/plain',
+            },
           });
 
           console.log({ statusCode, contentType, objectKey });
