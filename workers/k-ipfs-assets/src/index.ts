@@ -125,8 +125,15 @@ export default {
         return response;
       }
 
-      // return new Response('Not found');
-      return fetch(request.url);
+      const data = {
+        status: 'ok',
+      };
+      const json = JSON.stringify(data, null, 2);
+      return new Response(json, {
+        headers: {
+          'content-type': 'application/json;charset=UTF-8',
+        },
+      });
     } catch (e) {
       return new Response('Error thrown ' + (e as Error).message);
     }
