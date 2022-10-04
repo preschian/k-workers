@@ -33,12 +33,16 @@ export default {
     try {
       const url = new URL(request.url);
       const headers = new Headers();
-      headers.set('Access-Control-Allow-Origin', '*');
 
       if (
         url.pathname.includes('/ipfs/') &&
         (request.method === 'GET' || request.method === 'HEAD')
       ) {
+        headers.set('Allow', 'GET, HEAD, POST, OPTIONS');
+        headers.set('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS');
+        headers.set('Access-Control-Allow-Origin', '*');
+        headers.set('Access-Control-Max-Age', '86400');
+
         // Construct the cache key from the cache URL
         const cacheKey = new Request(url.toString(), request);
         const cache = caches.default;
@@ -115,7 +119,7 @@ export default {
         // Any changes made to the response here will be reflected in the cached value
         // TODO: enable cache when goes live
         // headers.append('Cache-Control', 's-maxage=10');
-        // headers.append('Cache-Control', 'public, max-age=31536000');
+        headers.append('Cache-Control', 'public, max-age=31536000');
 
         response = new Response(object.body, {
           headers,
