@@ -17,11 +17,11 @@ export interface Env {
   //
   // Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
   MY_BUCKET: R2Bucket;
-}
 
-const DEDICATED_GATEWAY = 'https://r2.infura-ipfs.io';
-const PINATA_GATEWAY = 'https://kodadot.mypinata.cloud';
-const UPLOAD_R2 = 'https://k-upload-r2.preschian-cdn.workers.dev';
+  DEDICATED_GATEWAY: string;
+  PINATA_GATEWAY: string;
+  UPLOAD_R2_GATEWAY: string;
+}
 
 type ResponseBody =
   'string | Blob | ReadableStream | ArrayBuffer | ArrayBufferView | null';
@@ -70,7 +70,7 @@ export default {
         console.log({ objectKey, object });
 
         if (object === null) {
-          const fetchIPFS = await fetch(DEDICATED_GATEWAY + url.pathname);
+          const fetchIPFS = await fetch(env.DEDICATED_GATEWAY + url.pathname);
           const statusCode = fetchIPFS.status;
           const contentType = fetchIPFS.headers.get('Content-Type');
           const isJson = contentType === 'application/json';
@@ -80,7 +80,7 @@ export default {
             : await fetchIPFS.blob();
           const body = isJson ? JSON.stringify(bodyIPFS) : bodyIPFS;
 
-          const uploadR2 = await fetch(UPLOAD_R2 + url.pathname, {
+          const uploadR2 = await fetch(env.UPLOAD_R2_GATEWAY + url.pathname, {
             method: 'POST',
             body: body,
             headers: {
@@ -105,7 +105,10 @@ export default {
 
           // fallback to pinata
           if (url.pathname.length) {
-            return Response.redirect(`${PINATA_GATEWAY}${url.pathname}`, 302);
+            return Response.redirect(
+              `${env.PINATA_GATEWAY}${url.pathname}`,
+              302
+            );
           }
 
           headers.set('Content-Type', 'application/json;charset=UTF-8');
@@ -125,7 +128,6 @@ export default {
         // Cache API respects Cache-Control headers. Setting s-max-age to 10
         // will limit the response to be in cache for 10 seconds max
         // Any changes made to the response here will be reflected in the cached value
-        // TODO: enable cache when goes live
         // headers.append('Cache-Control', 's-maxage=10');
         headers.append('Cache-Control', 'public, max-age=31536000');
 
