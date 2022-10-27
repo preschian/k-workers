@@ -52,7 +52,7 @@ export default {
         // Check whether the value is already available in the cache
         // if not, you will need to fetch it from R2, and store it in the cache
         // for future access
-        let response = await cache.match(cacheKey);
+        let response = await cache.match(cacheKey + '2022-10-27');
 
         if (response) {
           console.log(`Cache hit for: ${request.url}.`);
