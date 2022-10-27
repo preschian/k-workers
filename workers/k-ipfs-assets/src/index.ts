@@ -80,23 +80,26 @@ export default {
             : await fetchIPFS.blob();
           const body = isJson ? JSON.stringify(bodyIPFS) : bodyIPFS;
 
-          const uploadR2 = await fetch(env.UPLOAD_R2_GATEWAY + url.pathname, {
-            method: 'POST',
-            body: body,
-            headers: {
-              'Content-Type': contentType || 'text/plain',
-            },
-          });
-
           console.log({
             statusCode,
             contentType,
             objectKey,
-            'r2-status': uploadR2.status,
           });
 
           // TODO: what is the respone status from infura if bandwidth reached the limit?
           if (statusCode === 200) {
+            const uploadR2 = await fetch(env.UPLOAD_R2_GATEWAY + url.pathname, {
+              method: 'POST',
+              body: body,
+              headers: {
+                'Content-Type': contentType || 'text/plain',
+              },
+            });
+
+            console.log({
+              'upload-r2-status': uploadR2.status,
+            });
+
             headers.set('Content-Type', contentType || 'text/plain');
             return new Response(body, {
               headers,
