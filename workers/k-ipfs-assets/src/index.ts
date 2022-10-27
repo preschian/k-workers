@@ -20,6 +20,7 @@ export interface Env {
 
   DEDICATED_GATEWAY: string;
   PINATA_GATEWAY: string;
+  CLOUDFLARE_GATEWAY: string;
   UPLOAD_R2_GATEWAY: string;
 }
 
@@ -46,13 +47,13 @@ export default {
         headers.set('Access-Control-Max-Age', '86400');
 
         // Construct the cache key from the cache URL
-        const cacheKey = new Request(url.toString(), request);
+        const cacheKey = new Request(url.toString() + '2022-10-27', request);
         const cache = caches.default;
 
         // Check whether the value is already available in the cache
         // if not, you will need to fetch it from R2, and store it in the cache
         // for future access
-        let response = await cache.match(cacheKey + '2022-10-27');
+        let response = await cache.match(cacheKey);
 
         if (response) {
           console.log(`Cache hit for: ${request.url}.`);
@@ -107,9 +108,17 @@ export default {
           }
 
           // fallback to pinata
+          // if (url.pathname.length) {
+          //   return Response.redirect(
+          //     `${env.PINATA_GATEWAY}${url.pathname}`,
+          //     302
+          //   );
+          // }
+
+          // fallback to cf-ipfs
           if (url.pathname.length) {
             return Response.redirect(
-              `${env.PINATA_GATEWAY}${url.pathname}`,
+              `${env.CLOUDFLARE_GATEWAY}${url.pathname}`,
               302
             );
           }
