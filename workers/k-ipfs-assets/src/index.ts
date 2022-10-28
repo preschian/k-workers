@@ -47,7 +47,7 @@ export default {
         headers.set('Access-Control-Max-Age', '86400');
 
         // Construct the cache key from the cache URL
-        const cacheKey = new Request(url.toString() + '2022-10-27', request);
+        const cacheKey = new Request(url.toString() + '2022-10-28', request);
         const cache = caches.default;
 
         // Check whether the value is already available in the cache
@@ -71,7 +71,11 @@ export default {
         console.log({ objectKey, object });
 
         if (object === null) {
-          const fetchIPFS = await fetch(env.DEDICATED_GATEWAY + url.pathname);
+          const fetchIPFS = await Promise.any([
+            fetch(env.DEDICATED_GATEWAY + url.pathname),
+            fetch(env.PINATA_GATEWAY + url.pathname),
+            fetch(env.CLOUDFLARE_GATEWAY + url.pathname),
+          ]);
           const statusCode = fetchIPFS.status;
           const contentType = fetchIPFS.headers.get('Content-Type');
           const isJson = contentType === 'application/json';
@@ -99,6 +103,7 @@ export default {
 
             console.log({
               'upload-r2-status': uploadR2.status,
+              path: env.UPLOAD_R2_GATEWAY,
             });
 
             headers.set('Content-Type', contentType || 'text/plain');
