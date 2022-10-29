@@ -19,6 +19,7 @@ export interface Env {
   MY_BUCKET: R2Bucket;
 
   DEDICATED_GATEWAY: string;
+  DEDICATED_BACKUP_GATEWAY: string;
   PINATA_GATEWAY: string;
   CLOUDFLARE_GATEWAY: string;
   UPLOAD_R2_GATEWAY: string;
@@ -36,16 +37,15 @@ export default {
     try {
       const url = new URL(request.url);
       const headers = new Headers();
+      headers.set('Allow', 'GET, HEAD, POST, OPTIONS');
+      headers.set('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS');
+      headers.set('Access-Control-Allow-Origin', '*');
+      headers.set('Access-Control-Max-Age', '86400');
 
       if (
         url.pathname.includes('/ipfs/') &&
         (request.method === 'GET' || request.method === 'HEAD')
       ) {
-        headers.set('Allow', 'GET, HEAD, POST, OPTIONS');
-        headers.set('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS');
-        headers.set('Access-Control-Allow-Origin', '*');
-        headers.set('Access-Control-Max-Age', '86400');
-
         // Construct the cache key from the cache URL
         const cacheKey = new Request(url.toString() + '2022-10-28', request);
         const cache = caches.default;
@@ -73,8 +73,7 @@ export default {
         if (object === null) {
           const fetchIPFS = await Promise.any([
             fetch(env.DEDICATED_GATEWAY + url.pathname),
-            fetch(env.PINATA_GATEWAY + url.pathname),
-            fetch(env.CLOUDFLARE_GATEWAY + url.pathname),
+            fetch(env.DEDICATED_BACKUP_GATEWAY + url.pathname),
           ]);
           const statusCode = fetchIPFS.status;
           const contentType = fetchIPFS.headers.get('Content-Type');
@@ -86,6 +85,7 @@ export default {
           const body = isJson ? JSON.stringify(bodyIPFS) : bodyIPFS;
 
           console.log({
+            statusURL: fetchIPFS.url,
             statusCode,
             contentType,
             objectKey,
@@ -113,20 +113,29 @@ export default {
           }
 
           // fallback to pinata
+          if (url.pathname.length) {
+            return Response.redirect(
+              `${env.PINATA_GATEWAY}${url.pathname}`,
+              302
+            );
+          }
+
+          // fallback to cf-ipfs
           // if (url.pathname.length) {
           //   return Response.redirect(
-          //     `${env.PINATA_GATEWAY}${url.pathname}`,
+          //     `${env.CLOUDFLARE_GATEWAY}${url.pathname}`,
           //     302
           //   );
           // }
 
-          // fallback to cf-ipfs
-          if (url.pathname.length) {
-            return Response.redirect(
-              `${env.CLOUDFLARE_GATEWAY}${url.pathname}`,
-              302
-            );
-          }
+          // force to fallback to infura
+          // if (url.pathname.length) {
+          // return Response.redirect(
+          //   `${env.DEDICATED_BACKUP_GATEWAY}${url.pathname}`,
+          //   302
+          // );
+          //   return fetch(`${env.DEDICATED_BACKUP_GATEWAY}${url.pathname}`);
+          // }
 
           headers.set('Content-Type', 'application/json;charset=UTF-8');
           return new Response(

@@ -4,6 +4,7 @@ compatibility_date = "2022-09-30"
 
 [vars]
 DEDICATED_GATEWAY = 'https://r2.infura-ipfs.io'
+DEDICATED_BACKUP_GATEWAY = 'https://r2-backup.infura-ipfs.io'
 PINATA_GATEWAY = 'https://kodadot.mypinata.cloud'
 CLOUDFLARE_GATEWAY = 'https://cloudflare-ipfs.com'
 UPLOAD_R2_GATEWAY = 'https://k-upload-r2.preschian-cdn.workers.dev'
