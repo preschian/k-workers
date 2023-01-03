@@ -1,0 +1,13 @@
+name = "cdn"
+main = "src/index.ts"
+compatibility_date = "2023-01-03"
+
+[vars]
+DEDICATED_GATEWAY = 'https://r2.infura-ipfs.io'
+DEDICATED_BACKUP_GATEWAY = 'https://r2-backup.infura-ipfs.io'
+CLOUDFLARE_GATEWAY = 'https://cloudflare-ipfs.com'
+
+[[r2_buckets]]
+binding = 'MY_BUCKET'
+bucket_name = 'ipfs-assets'
+preview_bucket_name = 'ipfs-assets-dev'
