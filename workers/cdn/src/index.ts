@@ -70,13 +70,13 @@ app.all('/ipfs/:cid', async (c) => {
         // return c.body(cdn.body)
       }
 
-      return Response.redirect(`${c.env.BUCKET_PUBLIC_URL}/ipfs/${cid}`, 302)
-      // const r2Object = await fetch(`${c.env.BUCKET_PUBLIC_URL}/ipfs/${cid}`)
-      // if (r2Object.status === 200) {
-      //   const r2ContentType = r2Object.headers.get('content-type') || 'text/plain'
-      //   c.header('content-type', r2ContentType)
-      //   return c.body(r2Object.body)
-      // }
+      // return Response.redirect(`${c.env.BUCKET_PUBLIC_URL}/ipfs/${cid}`, 302)
+      const r2Object = await fetch(`${c.env.BUCKET_PUBLIC_URL}/ipfs/${cid}`)
+      if (r2Object.status === 200) {
+        const r2ContentType = r2Object.headers.get('content-type') || 'text/plain'
+        c.header('content-type', r2ContentType)
+        return c.body(r2Object.body)
+      }
     }
 
     // fallback to cf-ipfs
