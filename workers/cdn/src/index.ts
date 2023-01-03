@@ -71,11 +71,21 @@ app.all('/ipfs/:cid', async (c) => {
       }
 
       // return Response.redirect(`${c.env.BUCKET_PUBLIC_URL}/ipfs/${cid}`, 302)
-      const r2Object = await fetch(`${c.env.BUCKET_PUBLIC_URL}/ipfs/${cid}`)
-      if (r2Object.status === 200) {
-        const r2ContentType = r2Object.headers.get('content-type') || 'text/plain'
-        c.header('content-type', r2ContentType)
-        return c.body(r2Object.body)
+      // const r2Object = await fetch(`${c.env.BUCKET_PUBLIC_URL}/ipfs/${cid}`)
+      // if (r2Object.status === 200) {
+      //   const r2ContentType = r2Object.headers.get('content-type') || 'text/plain'
+      //   c.header('content-type', r2ContentType)
+      //   return c.body(r2Object.body)
+      // }
+      const r2Object = await c.env.MY_BUCKET.get(objectName);
+      if (r2Object !== null) {
+        const headers = new Headers()
+        r2Object.writeHttpMetadata(headers)
+        headers.set('etag', r2Object.httpEtag);
+
+        return new Response(r2Object.body, {
+          headers,
+        })
       }
     }
 
