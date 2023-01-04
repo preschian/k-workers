@@ -95,6 +95,7 @@ app.all('/ipfs/:cid', async (c) => {
 
       // redirect to cf-images
       if (imageUrl) {
+        // how to cache redirect response?
         return Response.redirect(imageUrl, 302);
       }
 
