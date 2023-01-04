@@ -138,12 +138,26 @@ app.all('/ipfs/:cid', async (c) => {
   }
 
   if (method === 'HEAD') {
-    const fetchIPFS = await Promise.any([
-      fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${cid}`),
-      fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${cid}`),
-    ]);
+    const objectName = `ipfs/${cid}`;
+    const object = await c.env.MY_BUCKET.get(objectName);
 
-    return c.body(fetchIPFS.body);
+    if (object === null) {
+      const fetchIPFS = await Promise.any([
+        fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${cid}`),
+        fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${cid}`),
+      ]);
+
+      return c.body(fetchIPFS.body);
+    }
+
+    const headers = new Headers();
+    object.writeHttpMetadata(headers);
+    headers.set('Access-Control-Allow-Origin', '*');
+    headers.set('etag', object.httpEtag);
+
+    return new Response(object.body, {
+      headers,
+    });
   }
 });
 
