@@ -25,6 +25,15 @@ app.all('/ipfs/:cid', async (c) => {
   const cid = c.req.param('cid');
   const method = c.req.method;
 
+  const request = c.req;
+  const cacheUrl = new URL(request.url);
+  const cacheKey = new Request(cacheUrl.toString(), request);
+  const cache = caches.default;
+
+  let response = await cache.match(cacheKey);
+
+  console.log('response', response);
+
   if (method === 'GET') {
     const objectName = `ipfs/${cid}`;
     const object = await c.env.MY_BUCKET.get(objectName);
@@ -74,27 +83,36 @@ app.all('/ipfs/:cid', async (c) => {
       return Response.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${cid}`, 302);
     }
 
-    // else, redirect to cf-images or render existing r2 object
-    const imageUrl = await uploadToCloudflareImages({
-      cid,
-      token: c.env.TOKEN,
-      gateway: c.env.DEDICATED_GATEWAY,
-      imageAccount: c.env.CF_IMAGE_ACCOUNT,
-      imageId: c.env.CF_IMAGE_ID,
-    });
+    if (!response) {
+      // else, redirect to cf-images or render existing r2 object
+      const imageUrl = await uploadToCloudflareImages({
+        cid,
+        token: c.env.TOKEN,
+        gateway: c.env.DEDICATED_GATEWAY,
+        imageAccount: c.env.CF_IMAGE_ACCOUNT,
+        imageId: c.env.CF_IMAGE_ID,
+      });
 
-    if (imageUrl) {
-      return Response.redirect(imageUrl, 302);
+      // redirect to cf-images
+      if (imageUrl) {
+        return Response.redirect(imageUrl, 302);
+      }
+
+      // else, render r2 object and cache it
+      const headers = new Headers();
+      object.writeHttpMetadata(headers);
+      headers.set('Access-Control-Allow-Origin', '*');
+      headers.set('etag', object.httpEtag);
+
+      response = new Response(object.body, {
+        headers,
+      });
+
+      response.headers.append('Cache-Control', 's-maxage=86400');
+      c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()));
     }
 
-    const headers = new Headers();
-    object.writeHttpMetadata(headers);
-    headers.set('Access-Control-Allow-Origin', '*');
-    headers.set('etag', object.httpEtag);
-
-    return new Response(object.body, {
-      headers,
-    });
+    return response;
   }
 
   if (method === 'HEAD') {
