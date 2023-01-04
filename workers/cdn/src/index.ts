@@ -146,8 +146,14 @@ app.all('/ipfs/:cid', async (c) => {
         fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${cid}`),
         fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${cid}`),
       ]);
+      const statusCode = fetchIPFS.status;
 
-      return c.body(fetchIPFS.body);
+      if (statusCode === 200) {
+        return c.body(fetchIPFS.body);
+      }
+
+      // fallback to cf-ipfs
+      return Response.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${cid}`, 302);
     }
 
     const headers = new Headers();
