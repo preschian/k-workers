@@ -6,7 +6,6 @@ interface Env {
   DEDICATED_GATEWAY: string;
   DEDICATED_BACKUP_GATEWAY: string;
   CLOUDFLARE_GATEWAY: string;
-  BUCKET_PUBLIC_URL: string;
   CF_IMAGE_ACCOUNT: string;
   CF_IMAGE_ID: string;
 
@@ -64,23 +63,13 @@ app.all('/ipfs/:cid', async (c) => {
       // end upload to cf-images section
       if (uploadStatus === 200 || uploadStatus === 409) {
         return Response.redirect(`https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${cid}/public`, 302)
-        // const cdn = await fetch(`https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${cid}/public`)
-        // const cdnContentType = cdn.headers.get('content-type') || 'text/plain'
-        // c.header('content-type', cdnContentType)
-        // return c.body(cdn.body)
       }
 
-      // return Response.redirect(`${c.env.BUCKET_PUBLIC_URL}/ipfs/${cid}`, 302)
-      // const r2Object = await fetch(`${c.env.BUCKET_PUBLIC_URL}/ipfs/${cid}`)
-      // if (r2Object.status === 200) {
-      //   const r2ContentType = r2Object.headers.get('content-type') || 'text/plain'
-      //   c.header('content-type', r2ContentType)
-      //   return c.body(r2Object.body)
-      // }
       const r2Object = await c.env.MY_BUCKET.get(objectName);
       if (r2Object !== null) {
         const headers = new Headers()
         r2Object.writeHttpMetadata(headers)
+        headers.set('Access-Control-Allow-Origin', '*');
         headers.set('etag', r2Object.httpEtag);
 
         return new Response(r2Object.body, {
