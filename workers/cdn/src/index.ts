@@ -27,7 +27,7 @@ app.all('/ipfs/:cid', async (c) => {
 
   const request = c.req;
   const cacheUrl = new URL(request.url);
-  const cacheKey = new Request(cacheUrl.toString(), request);
+  const cacheKey = new Request(cacheUrl.toString() + '23-07-01', request);
   const cache = caches.default;
 
   let response = await cache.match(cacheKey);
@@ -84,7 +84,24 @@ app.all('/ipfs/:cid', async (c) => {
     }
 
     if (!response) {
-      // else, redirect to cf-images or render existing r2 object
+      const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${cid}/public`;
+      const currentImage = await fetch(cfImage, {
+        method: 'HEAD',
+        cf: {
+          cacheTtlByStatus: {
+            '200-299': 604800,
+            '404': 1,
+            '500-599': 0,
+          },
+        },
+      });
+
+      // return early to cf-images
+      if (currentImage.ok) {
+        return Response.redirect(cfImage, 302);
+      }
+
+      // else, upload to cf-images
       const imageUrl = await uploadToCloudflareImages({
         cid,
         token: c.env.TOKEN,
