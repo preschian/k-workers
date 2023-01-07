@@ -1,19 +1,8 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
+import { Env, CACHE_MONTH } from './utils/constants';
 import { uploadToCloudflareImages } from './utils/cloudflare-images';
-
-interface Env {
-  MY_BUCKET: R2Bucket;
-  DEDICATED_GATEWAY: string;
-  DEDICATED_BACKUP_GATEWAY: string;
-  CLOUDFLARE_GATEWAY: string;
-  CF_IMAGE_ACCOUNT: string;
-  CF_IMAGE_ID: string;
-
-  // wrangler secret
-  TOKEN: string;
-}
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -89,7 +78,7 @@ app.all('/ipfs/:cid', async (c) => {
         method: 'HEAD',
         cf: {
           cacheTtlByStatus: {
-            '200-299': 604800,
+            '200-299': CACHE_MONTH,
             '404': 1,
             '500-599': 0,
           },
@@ -126,7 +115,7 @@ app.all('/ipfs/:cid', async (c) => {
         headers,
       });
 
-      response.headers.append('Cache-Control', 's-maxage=86400');
+      response.headers.append('Cache-Control', `s-maxage=${CACHE_MONTH}`);
       c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()));
     }
 
