@@ -19,7 +19,8 @@ app.all('/ipfs/*', async (c) => {
 
   const request = c.req;
   const cacheUrl = new URL(request.url);
-  const cacheKey = new Request(cacheUrl.toString(), request);
+  const cacheVersion = '2023-01-31';
+  const cacheKey = new Request(cacheUrl.toString() + cacheVersion, request);
   const cache = caches.default;
 
   let response = await cache.match(cacheKey);
