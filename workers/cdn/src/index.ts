@@ -28,6 +28,7 @@ app.all('/ipfs/*', async (c) => {
   let response = await cache.match(cacheKey);
 
   console.log('response', response);
+  console.log('ipfsFile', ipfsFile);
 
   if (method === 'GET') {
     const objectName = `ipfs/${ipfsFile}`;
@@ -57,7 +58,7 @@ app.all('/ipfs/*', async (c) => {
         });
 
         if (imageUrl) {
-          return Response.redirect(imageUrl, 302);
+          return c.redirect(imageUrl);
         }
 
         // else, render r2 object
@@ -75,10 +76,7 @@ app.all('/ipfs/*', async (c) => {
       }
 
       // fallback to cf-ipfs
-      return Response.redirect(
-        `${c.env.CLOUDFLARE_GATEWAY}/ipfs/${ipfsFile}`,
-        302
-      );
+      return c.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${ipfsFile}`);
     }
 
     if (!response) {
@@ -92,7 +90,7 @@ app.all('/ipfs/*', async (c) => {
 
       // return early to cf-images
       if (currentImage.ok) {
-        return Response.redirect(cfImage, 302);
+        return c.redirect(cfImage);
       }
 
       // else, upload to cf-images
@@ -107,7 +105,7 @@ app.all('/ipfs/*', async (c) => {
       // redirect to cf-images
       if (imageUrl) {
         // how to cache redirect response?
-        return Response.redirect(imageUrl, 302);
+        return c.redirect(imageUrl);
       }
 
       // else, render r2 object and cache it
@@ -143,10 +141,7 @@ app.all('/ipfs/*', async (c) => {
       }
 
       // fallback to cf-ipfs
-      return Response.redirect(
-        `${c.env.CLOUDFLARE_GATEWAY}/ipfs/${ipfsFile}`,
-        302
-      );
+      return c.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${ipfsFile}`);
     }
 
     const headers = new Headers();
