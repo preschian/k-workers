@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
-import { Env, CACHE_MONTH } from './utils/constants';
+import { Env, CACHE_MONTH, CACHE_TTL_BY_STATUS } from './utils/constants';
 import { uploadToCloudflareImages } from './utils/cloudflare-images';
 
 const app = new Hono<{ Bindings: Env }>();
@@ -16,7 +16,7 @@ app.all('/ipfs/:cid', async (c) => {
 
   const request = c.req;
   const cacheUrl = new URL(request.url);
-  const cacheKey = new Request(cacheUrl.toString() + '23-07-01', request);
+  const cacheKey = new Request(cacheUrl.toString(), request);
   const cache = caches.default;
 
   let response = await cache.match(cacheKey);
@@ -44,7 +44,7 @@ app.all('/ipfs/:cid', async (c) => {
         // put object to cf-images
         const imageUrl = await uploadToCloudflareImages({
           cid,
-          token: c.env.TOKEN,
+          token: c.env.IMAGE_API_TOKEN,
           gateway: c.env.DEDICATED_GATEWAY,
           imageAccount: c.env.CF_IMAGE_ACCOUNT,
           imageId: c.env.CF_IMAGE_ID,
@@ -76,13 +76,7 @@ app.all('/ipfs/:cid', async (c) => {
       const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${cid}/public`;
       const currentImage = await fetch(cfImage, {
         method: 'HEAD',
-        cf: {
-          cacheTtlByStatus: {
-            '200-299': CACHE_MONTH,
-            '404': 1,
-            '500-599': 0,
-          },
-        },
+        cf: CACHE_TTL_BY_STATUS,
       });
 
       // return early to cf-images
@@ -93,7 +87,7 @@ app.all('/ipfs/:cid', async (c) => {
       // else, upload to cf-images
       const imageUrl = await uploadToCloudflareImages({
         cid,
-        token: c.env.TOKEN,
+        token: c.env.IMAGE_API_TOKEN,
         gateway: c.env.DEDICATED_GATEWAY,
         imageAccount: c.env.CF_IMAGE_ACCOUNT,
         imageId: c.env.CF_IMAGE_ID,
