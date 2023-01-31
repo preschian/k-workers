@@ -1,7 +1,3 @@
-export function ipfsCompatible(ipfsFile: string) {
-  return ipfsFile.replaceAll('/', '-');
-}
-
 export async function uploadToCloudflareImages({
   token,
   gateway,
@@ -15,16 +11,12 @@ export async function uploadToCloudflareImages({
   imageAccount: string;
   imageId: string;
 }) {
-  // replace somecid/INV_Banner1.jpeg
-  // to somecid-INV_Banner1.jpeg
-  const ipfsId = ipfsCompatible(ipfsFile);
-
   const uploadHeaders = new Headers();
   uploadHeaders.append('Authorization', `Bearer ${token}`);
 
   const uploadFormData = new FormData();
-  uploadFormData.append('url', `${gateway}/ipfs/${ipfsId}`);
-  uploadFormData.append('id', ipfsId);
+  uploadFormData.append('url', `${gateway}/ipfs/${ipfsFile}`);
+  uploadFormData.append('id', ipfsFile);
 
   const requestOptions = {
     method: 'POST',
@@ -39,10 +31,12 @@ export async function uploadToCloudflareImages({
   );
   const uploadStatus = uploadCfImage.status;
 
+  console.log('uploadStatus', uploadStatus);
+
   // if image supported by cf-images or already exists, redirect to cf-images
   if (uploadStatus === 200 || uploadStatus === 409) {
-    // return Response.redirect(`https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${ipfsId}/public`, 302)
-    return `https://imagedelivery.net/${imageId}/${ipfsId}/public`;
+    // return Response.redirect(`https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${ipfsFile}/public`, 302)
+    return `https://imagedelivery.net/${imageId}/${ipfsFile}/public`;
   }
 
   return '';

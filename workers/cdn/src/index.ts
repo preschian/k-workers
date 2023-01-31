@@ -2,10 +2,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
 import { Env, CACHE_MONTH, CACHE_TTL_BY_STATUS } from './utils/constants';
-import {
-  uploadToCloudflareImages,
-  ipfsCompatible,
-} from './utils/cloudflare-images';
+import { uploadToCloudflareImages } from './utils/cloudflare-images';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -80,9 +77,7 @@ app.all('/ipfs/*', async (c) => {
     }
 
     if (!response) {
-      const cfImage = `https://imagedelivery.net/${
-        c.env.CF_IMAGE_ID
-      }/${ipfsCompatible(ipfsFile)}/public`;
+      const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${ipfsFile}/public`;
       const currentImage = await fetch(cfImage, {
         method: 'HEAD',
         cf: CACHE_TTL_BY_STATUS,
