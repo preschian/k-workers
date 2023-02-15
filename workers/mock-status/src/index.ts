@@ -1,8 +1,10 @@
 import { Hono } from 'hono';
 import { poweredBy } from 'hono/powered-by';
+import { cors } from 'hono/cors';
 
 const app = new Hono();
 
+app.use('*', cors());
 app.use('*', poweredBy());
 
 app.get('/', (c) => {
