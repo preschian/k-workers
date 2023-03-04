@@ -20,19 +20,10 @@ export async function uploadToCloudflareImages(
     redirect: 'follow',
   };
 
-  const uploadCfImage = await fetch(
+  await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${c.env.CF_IMAGE_ACCOUNT}/images/v1`,
     requestOptions
   );
-  const uploadStatus = uploadCfImage.status;
-
-  // if image supported by cf-images or already exists, redirect to cf-images
-  if (uploadStatus === 200 || uploadStatus === 409) {
-    // return Response.redirect(`https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${cid}/public`, 302)
-    return `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${cid}/public`;
-  }
-
-  return '';
 }
 
 export async function uploadToR2(c: Context<Bindings>, cid: string) {
@@ -53,8 +44,6 @@ export async function uploadToR2(c: Context<Bindings>, cid: string) {
       });
     }
   }
-
-  return;
 }
 
 export async function pinFile(c: Context<Bindings>) {
@@ -64,9 +53,9 @@ export async function pinFile(c: Context<Bindings>) {
   const file = formData.get(key) as unknown as File;
   const cid = await client.storeBlob(new Blob([file]));
   const status = await client.status(cid);
-  console.log(status);
 
-  await uploadToR2(c, cid);
+  // upload to r2 in the background
+  c.executionCtx.waitUntil(uploadToR2(c, cid));
 
   return status;
 }
