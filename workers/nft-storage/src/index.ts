@@ -1,15 +1,22 @@
 import { Hono } from 'hono';
+import { logger } from 'hono/logger';
 
-const app = new Hono();
+import type { Bindings } from './utils/constants';
+import { pinFile } from './utils/upload';
 
+const app = new Hono<Bindings>();
+
+app.use('*', logger());
 app.get('/', (c) => c.text('hello nft-storage!'));
 
 app.post('/pinFile', async (c) => {
-  console.log('');
-  console.log(c.req.headers.get('Content-Type'));
-  // console.log(await c.req.formData());
-  console.log('');
-  return c.text('hello nft-storage!');
+  const status = await pinFile(c);
+  return c.json(status);
+});
+
+app.post('/pinJson', async (c) => {
+  const status = await pinFile(c);
+  return c.json(status);
 });
 
 export default app;
