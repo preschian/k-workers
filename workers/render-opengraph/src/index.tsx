@@ -97,7 +97,7 @@ app.get('/:chain/gallery/:id', async (c) => {
   const divisor = 1000000000000; // 10^12
   const convertedValue = numAsNumber / divisor;
   const ksmValue = convertedValue.toFixed(1);
-  const price = `${ksmValue} KSM`;
+  const price = number === '0' ? '' : `${ksmValue} KSM`;
 
   // construct image to cdn
   const ipfsCid = nftEntityById.meta.image.split('ipfs:/')[1];
