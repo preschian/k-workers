@@ -63,9 +63,11 @@ importers:
     specifiers:
       '@cloudflare/workers-types': ^4.20230307.0
       hono: ^3.1.2
+      isbot: ^3.6.7
       wrangler: ^2.13.0
     dependencies:
       hono: 3.1.2
+      isbot: 3.6.7
     devDependencies:
       '@cloudflare/workers-types': 4.20230307.0
       wrangler: 2.13.0
@@ -3555,6 +3557,11 @@ packages:
   /isarray/1.0.0:
     resolution: {integrity: sha512-VLghIWNM6ELQzo7zwmcg0NmTVyWKYjvIeM83yjp0wRDTmUnrM678fQbcKBo6n2CJEF0szoG//ytg+TKla89ALQ==}
     dev: true
+
+  /isbot/3.6.7:
+    resolution: {integrity: sha512-SXNUQaNZlj/+9jdrGnAp6WW0YoHe3MIwwc6oRIYuhhERBUt7/L6I7JkMiA2sX9fcvS7gZ2C7GWgmDZfOOU4I5g==}
+    engines: {node: '>=12'}
+    dev: false
 
   /isexe/2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}

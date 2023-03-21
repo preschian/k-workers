@@ -4,7 +4,8 @@
     "dev": "wrangler dev src/index.tsx"
   },
   "dependencies": {
-    "hono": "^3.1.2"
+    "hono": "^3.1.2",
+    "isbot": "^3.6.7"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230307.0",

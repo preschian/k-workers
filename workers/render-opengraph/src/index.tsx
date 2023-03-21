@@ -1,6 +1,5 @@
 import { Hono } from 'hono';
-import { BOT_AGENTS } from './constants';
-import { containsOneOfThem } from './helper';
+import isbot from 'isbot';
 import { Opengraph } from './template';
 
 const app = new Hono();
@@ -54,7 +53,7 @@ async function getProperties(nft) {
 app.get('/:chain/gallery/:id', async (c) => {
   const useragent = c.req.headers.get('user-agent');
 
-  if (useragent && !containsOneOfThem(BOT_AGENTS, useragent)) {
+  if (useragent && !isbot(useragent)) {
     return fetch(c.req.url);
   }
 
