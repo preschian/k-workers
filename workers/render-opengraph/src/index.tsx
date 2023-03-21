@@ -90,7 +90,7 @@ app.get('/:chain/gallery/:id', async (c) => {
 
   const canonical = `https://kodadot.xyz/${chain}/gallery/${id}`;
   const name = nftEntityById.name;
-  const description = nftEntityById.meta.description;
+  const description = nftEntityById.meta?.description;
   const title = `${name} | Low Carbon NFTs`;
 
   // contruct price
@@ -102,7 +102,7 @@ app.get('/:chain/gallery/:id', async (c) => {
   const price = number === '0' ? '' : `${ksmValue} KSM`;
 
   // construct image to cdn
-  const ipfsCid = nftEntityById.meta.image.split('ipfs:/')[1];
+  const ipfsCid = nftEntityById.meta?.image.split('ipfs:/')[1];
   const cdn = new URL(ipfsCid, 'https://image.w.kodadot.xyz');
   const image = new URL(`https://og-image-green-seven.vercel.app/${name}.jpeg`);
   image.searchParams.set('price', price);
