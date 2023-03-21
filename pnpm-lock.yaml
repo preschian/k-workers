@@ -59,6 +59,17 @@ importers:
       jest-environment-miniflare: 2.12.0_jest@29.4.3
       wrangler: 2.9.1
 
+  workers/render-opengraph:
+    specifiers:
+      '@cloudflare/workers-types': ^4.20230214.0
+      hono: ^3.1.2
+      wrangler: ^2.9.1
+    dependencies:
+      hono: 3.1.2
+    devDependencies:
+      '@cloudflare/workers-types': 4.20230214.0
+      wrangler: 2.9.1
+
 packages:
 
   /@ampproject/remapping/2.2.0:
@@ -3156,6 +3167,11 @@ packages:
 
   /hono/2.7.8:
     resolution: {integrity: sha512-LXLXw6LilE16QO0siFBDiNzmaRP6ca5ZyF0gDWcaiUqJJtE/d4lV/Hpst2O33AmJB5n0DQa5w53gZLUVf7uXNg==}
+    engines: {node: '>=16.0.0'}
+    dev: false
+
+  /hono/3.1.2:
+    resolution: {integrity: sha512-keNMGSlBX2VbwD5gF10Xu0zuUm9mTy1HWctIhuom8FJEJY6aKo1Bb/vQXTEjBupKDG7MJi2aG05YMo01GjkMQA==}
     engines: {node: '>=16.0.0'}
     dev: false
 
