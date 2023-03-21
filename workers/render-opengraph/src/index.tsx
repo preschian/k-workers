@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
-
+import { BOT_AGENTS } from './constants';
+import { containsOneOfThem } from './helper';
 import { Opengraph } from './template';
 
 const app = new Hono();
@@ -51,6 +52,12 @@ async function getProperties(nft) {
 }
 
 app.get('/:chain/gallery/:id', async (c) => {
+  const useragent = c.req.headers.get('user-agent');
+
+  if (useragent && !containsOneOfThem(BOT_AGENTS, useragent)) {
+    return fetch(c.req.url);
+  }
+
   const chain = c.req.param('chain') as 'bsx' | 'rmrk';
   const id = c.req.param('id');
 
@@ -80,7 +87,7 @@ app.get('/:chain/gallery/:id', async (c) => {
                 id
               }
             }
-          }      
+          }
         `,
     }),
   });
