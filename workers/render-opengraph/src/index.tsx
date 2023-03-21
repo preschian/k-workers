@@ -30,6 +30,8 @@ const Layout = (props: SiteData) => html`
       <meta property="og:title" content="${props.title}" />
       <meta property="og:description" content="${props.description}" />
       <meta property="og:image" content="${props.image}" />
+
+      <meta name="twitter:card" content="summary_large_image" />
     </head>
 
     <body>
