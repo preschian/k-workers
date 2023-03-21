@@ -52,18 +52,21 @@ app.get('/', (c) => {
 });
 
 app.get('/:chain/gallery/:id', async (c) => {
-  const chain = c.req.param('chain');
+  const chain = c.req.param('chain') as 'bsx' | 'rmrk';
   const id = c.req.param('id');
 
-  const response = await fetch(
-    'https://squid.subsquid.io/snekk/v/005/graphql',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: `
+  const endpoints: Record<'bsx' | 'rmrk', string> = {
+    bsx: 'https://squid.subsquid.io/snekk/v/005/graphql',
+    rmrk: 'https://squid.subsquid.io/rubick/graphql',
+  };
+
+  const response = await fetch(endpoints[chain], {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: `
           query NftById {
             nftEntityById(id: "${id}") {
               id
@@ -80,9 +83,8 @@ app.get('/:chain/gallery/:id', async (c) => {
             }
           }      
         `,
-      }),
-    }
-  );
+    }),
+  });
   const data = await response.json();
   const { nftEntityById } = data.data;
 
