@@ -21,7 +21,7 @@ app.get('/:chain/gallery/:id', async (c) => {
   const chain = c.req.param('chain');
   const id = c.req.param('id');
 
-  if (chain === 'bsx' || chain === 'rmrk') {
+  if (chain === 'bsx' || chain === 'rmrk' || chain === 'snek') {
     const response = await getNftById(chain, id);
     const data = (await response.json()) as NFTEntity;
     const { nftEntityById } = data.data;
