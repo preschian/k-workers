@@ -1,4 +1,6 @@
 import { extendFields, getClient } from '@kodadot1/uniquery';
+import { $purify } from '@kodadot1/minipfs';
+
 import type { Prefix } from '@kodadot1/static';
 import type { NFT, NFTMeta } from './types';
 
@@ -28,10 +30,7 @@ export const getNftById = async (chain: Chain, id: string) => {
 };
 
 export function ipfsToCdn(ipfs: string) {
-  const ipfsCid = ipfs.split('ipfs:/')[1];
-  const cdn = new URL(ipfsCid, 'https://image.w.kodadot.xyz');
-
-  return cdn.toString();
+  return $purify(ipfs)[0];
 }
 
 export function formatPrice(price: string) {

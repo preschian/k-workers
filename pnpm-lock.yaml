@@ -75,12 +75,14 @@ importers:
   workers/ssr-opengraph:
     specifiers:
       '@cloudflare/workers-types': ^4.20230307.0
+      '@kodadot1/minipfs': 0.2.0-rc.0
       '@kodadot1/static': 0.0.1-rc.0
       '@kodadot1/uniquery': 0.2.2-rc.0
       hono: ^3.1.2
       isbot: ^3.6.7
       wrangler: ^2.13.0
     dependencies:
+      '@kodadot1/minipfs': 0.2.0-rc.0
       '@kodadot1/static': 0.0.1-rc.0
       '@kodadot1/uniquery': 0.2.2-rc.0
       hono: 3.1.2
@@ -1212,6 +1214,12 @@ packages:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
+
+  /@kodadot1/minipfs/0.2.0-rc.0:
+    resolution: {integrity: sha512-xnH8mFje1x8y5QYzKbpxg2rlHVCI1fGy+YnUGI+WUkuEPTVPwgTlapzDyO8AztGucbqbuk4ELghHcyyZwde2iA==}
+    dependencies:
+      ohmyfetch: 0.4.21
+    dev: false
 
   /@kodadot1/static/0.0.1-rc.0:
     resolution: {integrity: sha512-0c91/nU4kyVSA218+vDJHnbGbBxFauuv7LpTXdQHo2vXvxbDou46tvSqN7Ac91SG1blTKhgMe2xWBEBsA4n7Nw==}
@@ -2479,7 +2487,6 @@ packages:
     engines: {node: '>=10.16.0'}
     dependencies:
       streamsearch: 1.1.0
-    dev: true
 
   /cache-base/1.0.1:
     resolution: {integrity: sha512-AKcdTnFSWATd5/GCPRxr2ChwIJ85CeyrEyjRHlKxQ56d4XJMGym0uAiKn0xbLOGOl3+yRpOTi484dVCEc5AUzQ==}
@@ -4592,6 +4599,10 @@ packages:
     resolution: {integrity: sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==}
     dev: true
 
+  /node-fetch-native/0.1.8:
+    resolution: {integrity: sha512-ZNaury9r0NxaT2oL65GvdGDy+5PlSaHTovT6JV5tOW07k1TQmgC0olZETa4C9KZg0+6zBr99ctTYa3Utqj9P/Q==}
+    dev: false
+
   /node-fetch-native/1.0.2:
     resolution: {integrity: sha512-KIkvH1jl6b3O7es/0ShyCgWLcfXxlBrLBbP3rOr23WArC66IMcU4DeZEeYEOwnopYhawLTn7/y+YtmASe8DFVQ==}
     dev: false
@@ -4680,6 +4691,15 @@ packages:
       destr: 1.2.2
       node-fetch-native: 1.0.2
       ufo: 1.1.1
+    dev: false
+
+  /ohmyfetch/0.4.21:
+    resolution: {integrity: sha512-VG7f/JRvqvBOYvL0tHyEIEG7XHWm7OqIfAs6/HqwWwDfjiJ1g0huIpe5sFEmyb+7hpFa1EGNH2aERWR72tlClw==}
+    dependencies:
+      destr: 1.2.2
+      node-fetch-native: 0.1.8
+      ufo: 0.8.6
+      undici: 5.20.0
     dev: false
 
   /once/1.4.0:
@@ -5160,7 +5180,6 @@ packages:
   /streamsearch/1.1.0:
     resolution: {integrity: sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==}
     engines: {node: '>=10.0.0'}
-    dev: true
 
   /string-length/4.0.2:
     resolution: {integrity: sha512-+l6rNN5fYHNhZZy41RXsYptCjA2Igmq4EG7kZAYFQI1E1VTXarr6ZPXBg6eq7Y6eK4FEhY6AJlyuFIb/v/S0VQ==}
@@ -5315,6 +5334,10 @@ packages:
     hasBin: true
     dev: true
 
+  /ufo/0.8.6:
+    resolution: {integrity: sha512-fk6CmUgwKCfX79EzcDQQpSCMxrHstvbLswFChHS0Vump+kFkw7nJBfTZoC1j0bOGoY9I7R3n2DGek5ajbcYnOw==}
+    dev: false
+
   /ufo/1.1.1:
     resolution: {integrity: sha512-MvlCc4GHrmZdAllBc0iUDowff36Q9Ndw/UzqmEKyrfSzokTd9ZCy1i+IIk5hrYKkjoYVQyNbrw7/F8XJ2rEwTg==}
     dev: false
@@ -5331,7 +5354,6 @@ packages:
     engines: {node: '>=12.18'}
     dependencies:
       busboy: 1.6.0
-    dev: true
 
   /undici/5.9.1:
     resolution: {integrity: sha512-6fB3a+SNnWEm4CJbgo0/CWR8RGcOCQP68SF4X0mxtYTq2VNN8T88NYrWVBAeSX+zb7bny2dx2iYhP3XHi00omg==}
