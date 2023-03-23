@@ -1,6 +1,9 @@
+import { extendFields, getClient } from '@kodadot1/uniquery';
+import type { Prefix } from '@kodadot1/static';
 import type { NFT, NFTMeta } from './types';
 
-type Chain = 'bsx' | 'rmrk' | 'snek';
+// TODO: put 'rmrk' into Prefix type
+export type Chain = 'rmrk' & Prefix;
 
 export const endpoints: Record<Chain, string> = {
   bsx: 'https://squid.subsquid.io/snekk/v/005/graphql',
@@ -9,30 +12,18 @@ export const endpoints: Record<Chain, string> = {
 };
 
 export const getNftById = async (chain: Chain, id: string) => {
+  const client = getClient();
+  const query = client.itemById(id, extendFields(['meta', 'price']));
+
+  // TODO: indexer for 'rmrk'
+  // return await client.fetch(query);
+
   return await fetch(endpoints[chain], {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      query: `
-          query NftById {
-            nftEntityById(id: "${id}") {
-              id
-              name
-              price
-              metadata
-              meta {
-                name
-                image
-                animationUrl
-                description
-                id
-              }
-            }
-          }
-        `,
-    }),
+    body: JSON.stringify(query),
   });
 };
 
