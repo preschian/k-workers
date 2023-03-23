@@ -78,6 +78,7 @@ importers:
       '@kodadot1/minipfs': 0.2.0-rc.0
       '@kodadot1/static': 0.0.1-rc.0
       '@kodadot1/uniquery': 0.2.2-rc.0
+      '@polkadot/util': ^11.1.1
       hono: ^3.1.2
       isbot: ^3.6.7
       wrangler: ^2.13.0
@@ -85,6 +86,7 @@ importers:
       '@kodadot1/minipfs': 0.2.0-rc.0
       '@kodadot1/static': 0.0.1-rc.0
       '@kodadot1/uniquery': 0.2.2-rc.0
+      '@polkadot/util': 11.1.1
       hono: 3.1.2
       isbot: 3.6.7
     devDependencies:
@@ -2078,6 +2080,50 @@ packages:
       - utf-8-validate
     dev: true
 
+  /@polkadot/util/11.1.1:
+    resolution: {integrity: sha512-8vlSfJhMAck2OVdk8aep3sZP17txR+p8X3bFNP0qNJ7frfF741v/eViEC7bbVIgdT0/vYNmgS6+0Dwe06dnKuA==}
+    engines: {node: '>=14'}
+    dependencies:
+      '@polkadot/x-bigint': 11.1.1
+      '@polkadot/x-global': 11.1.1
+      '@polkadot/x-textdecoder': 11.1.1
+      '@polkadot/x-textencoder': 11.1.1
+      '@types/bn.js': 5.1.1
+      bn.js: 5.2.1
+      tslib: 2.5.0
+    dev: false
+
+  /@polkadot/x-bigint/11.1.1:
+    resolution: {integrity: sha512-iLaaPSCnVuZ7LoOWZTHgs+Ebws0MdoNHmXoTriU60YLoojDJbcOInlO+1h3fNy6oPnYN3qA3Ml1mKDnP837nxg==}
+    engines: {node: '>=14'}
+    dependencies:
+      '@polkadot/x-global': 11.1.1
+      tslib: 2.5.0
+    dev: false
+
+  /@polkadot/x-global/11.1.1:
+    resolution: {integrity: sha512-++LFUT98bi2m15w8LrgOcpE5mi9bmH65YB02xbKzU0ZHe1g5l0LwFt+QFB9tZlNqfWTgwpsFshGtvdPQqrFnKw==}
+    engines: {node: '>=14'}
+    dependencies:
+      tslib: 2.5.0
+    dev: false
+
+  /@polkadot/x-textdecoder/11.1.1:
+    resolution: {integrity: sha512-YoB82pr6kYkK5yg2BQgm5wVTf6Hq+01i+A6PgV1uXr7Rm3bxmQpGR2DKZq0QNjwWP0s6e91BxXvGoPjf7S9tBA==}
+    engines: {node: '>=14'}
+    dependencies:
+      '@polkadot/x-global': 11.1.1
+      tslib: 2.5.0
+    dev: false
+
+  /@polkadot/x-textencoder/11.1.1:
+    resolution: {integrity: sha512-I4IygnZeSyGUPyTmu7W2IsCHakax7QTVR9kMkCywaKEjiLzZU5B/LuDB0Gxn/3Jw2X2YfoB1TQ4mZ1bte4LX0g==}
+    engines: {node: '>=14'}
+    dependencies:
+      '@polkadot/x-global': 11.1.1
+      tslib: 2.5.0
+    dev: false
+
   /@sinclair/typebox/0.25.22:
     resolution: {integrity: sha512-6U6r2L7rnM7EG8G1tWzIjdB3QlsHF4slgcqXNN/SF0xJOAr0nDmT2GedlkyO3mrv8mDTJ24UuOMWR3diBrCvQQ==}
     dev: true
@@ -2135,6 +2181,12 @@ packages:
       '@types/node': 18.11.18
     dev: true
 
+  /@types/bn.js/5.1.1:
+    resolution: {integrity: sha512-qNrYbZqMx0uJAfKnKclPh+dTwK33KfLHYqtyODwd5HnXOjnkhc4qgn3BrK6RWyGZm5+sIFE7Q7Vz6QQtJB7w7g==}
+    dependencies:
+      '@types/node': 18.11.18
+    dev: false
+
   /@types/graceful-fs/4.1.6:
     resolution: {integrity: sha512-Sig0SNORX9fdW+bQuTEovKj3uHcUL6LQKbCrrqb1X7J6/ReAbhCXRAhc+SMejhLELFj2QcyuxmUooZ4bt5ReSw==}
     dependencies:
@@ -2166,7 +2218,6 @@ packages:
 
   /@types/node/18.11.18:
     resolution: {integrity: sha512-DHQpWGjyQKSHj3ebjFI/wRKcqQcdR+MoFBygntYOZytCqNfkd2ZC4ARDJ2DQqhjH5p85Nnd3jhUJIXrszFX/JA==}
-    dev: true
 
   /@types/node/18.11.7:
     resolution: {integrity: sha512-LhFTglglr63mNXUSRYD8A+ZAIu5sFqNJ4Y2fPuY7UlrySJH87rRRlhtVmMHplmfk5WkoJGmDjE9oiTfyX94CpQ==}
@@ -2422,6 +2473,10 @@ packages:
   /blake3-wasm/2.1.5:
     resolution: {integrity: sha512-F1+K8EbfOZE49dtoPtmxUQrpXaBIl3ICvasLh+nJta0xkz+9kF/7uet9fLnwKqhDrmj6g+6K3Tw9yQPUg2ka5g==}
     dev: true
+
+  /bn.js/5.2.1:
+    resolution: {integrity: sha512-eXRvHzWyYPBuB4NBy0cmYQjGitUrtqwbvlzP3G6VFnNRbsZQIxQ10PbKKHt8gZ/HW/D/747aDl+QkDqg3KQLMQ==}
+    dev: false
 
   /brace-expansion/1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
@@ -5305,6 +5360,10 @@ packages:
       regex-not: 1.0.2
       safe-regex: 1.1.0
     dev: true
+
+  /tslib/2.5.0:
+    resolution: {integrity: sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==}
+    dev: false
 
   /type-detect/4.0.8:
     resolution: {integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==}

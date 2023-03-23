@@ -1,5 +1,6 @@
 import { extendFields, getClient } from '@kodadot1/uniquery';
 import { $purify } from '@kodadot1/minipfs';
+import { formatBalance } from '@polkadot/util';
 
 import type { Prefix } from '@kodadot1/static';
 import type { NFT, NFTMeta } from './types';
@@ -34,12 +35,15 @@ export function ipfsToCdn(ipfs: string) {
 }
 
 export function formatPrice(price: string) {
-  const number = price;
-  const numAsNumber = parseFloat(number);
-  const divisor = 1000000000000; // 10^12
-  const convertedValue = numAsNumber / divisor;
-  const ksmValue = convertedValue.toFixed(1);
-  return number === '0' ? '' : `${ksmValue} KSM`;
+  const number = BigInt(price);
+  const format = formatBalance(number, {
+    decimals: 12,
+    withUnit: 'KSM',
+    forceUnit: '-',
+    withZero: false,
+  });
+
+  return format.toString();
 }
 
 export async function getProperties(nft: NFT) {
