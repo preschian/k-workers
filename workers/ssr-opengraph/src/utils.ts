@@ -42,8 +42,9 @@ export function formatPrice(price: string) {
     forceUnit: '-',
     withZero: false,
   });
+  const value = format.toString();
 
-  return format.toString();
+  return value === '0' ? '' : value;
 }
 
 export async function getProperties(nft: NFT) {
