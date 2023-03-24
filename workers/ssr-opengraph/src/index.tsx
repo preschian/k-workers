@@ -75,19 +75,16 @@ app.get('/:chain/collection/:id', async (c) => {
   const id = c.req.param('id');
 
   if (chains.includes(chain)) {
-    const response = await getCollectionById(chain as Chains, id);
-    const data = response as CollectionEntity;
-    const { collection } = data.data;
+    const [collectionItem, nfts] = await Promise.all([
+      getCollectionById(chain as Chains, id),
+      getItemListByCollectionId(chain as Chains, id),
+    ]);
+    const { collection } = (collectionItem as CollectionEntity).data;
 
     const canonical = `https://kodadot.xyz/${chain}/gallery/${id}`;
     const { name, description, title, cdn } = await getProperties(collection);
 
-    // get nft.length
-    const nfts = (await getItemListByCollectionId(
-      chain as Chains,
-      id
-    )) as ListEntity;
-    const price = nfts.data.items.length || 0;
+    const price = (nfts as ListEntity).data.items.length || 0;
 
     // construct vercel image with cdn
     const image = new URL(
