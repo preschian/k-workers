@@ -29,3 +29,9 @@ export interface CollectionEntity {
     collection: NFT;
   };
 }
+
+export interface ListEntity {
+  data: {
+    items: NFT[];
+  };
+}

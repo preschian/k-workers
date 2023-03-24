@@ -4,12 +4,13 @@ import { Opengraph } from './template';
 import {
   formatPrice,
   getCollectionById,
+  getItemListByCollectionId,
   getNftById,
   getProperties,
 } from './utils';
 
 import type { Chains } from './utils';
-import type { CollectionEntity, NFTEntity } from './types';
+import type { CollectionEntity, ListEntity, NFTEntity } from './types';
 
 const app = new Hono();
 
@@ -81,14 +82,18 @@ app.get('/:chain/collection/:id', async (c) => {
     const canonical = `https://kodadot.xyz/${chain}/gallery/${id}`;
     const { name, description, title, cdn } = await getProperties(collection);
 
-    // contruct price
-    // const price = formatPrice(collection.price);
+    // get nft.length
+    const nfts = (await getItemListByCollectionId(
+      chain as Chains,
+      id
+    )) as ListEntity;
+    const price = nfts.data.items.length || 0;
 
     // construct vercel image with cdn
     const image = new URL(
       `https://og-image-green-seven.vercel.app/${name}.jpeg`
     );
-    // image.searchParams.set('price', price);
+    image.searchParams.set('price', `Items: ${price}`);
     image.searchParams.set('image', cdn);
 
     const props = {
