@@ -15,6 +15,18 @@ export const getNftById = async (chain: Chains, id: string) => {
   return await client.fetch(query);
 };
 
+export const getCollectionById = async (chain: Chains, id: string) => {
+  const getChain = chain === 'rmrk' ? 'ksm' : chain;
+  const client = getClient(getChain);
+  const query = client.collectionById(id, extendFields(['meta']));
+
+  // const queryList = client.itemListByCollectionId(id);
+  // const data = await client.fetch(queryList);
+  // console.log(data.data.items);
+
+  return await client.fetch(query);
+};
+
 export function ipfsToCdn(ipfs: string) {
   return $purify(ipfs)[0];
 }
