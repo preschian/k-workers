@@ -14,29 +14,26 @@ app.all('/ipfs/*', async (c) => {
   const method = c.req.method;
 
   const url = new URL(c.req.url);
-  const cid = url.pathname.split('/')[2];
-  const ipfsFile = url.pathname.replace('/ipfs/', '');
+  const path = url.pathname.replace('/ipfs/', '');
 
   const request = c.req;
   const cacheUrl = new URL(request.url);
-  const cacheVersion = '2023-01-31';
-  const cacheKey = new Request(cacheUrl.toString() + cacheVersion, request);
+  const cacheKey = new Request(cacheUrl.toString(), request);
   const cache = caches.default;
 
   let response = await cache.match(cacheKey);
 
   console.log('response', response);
-  console.log('ipfsFile', ipfsFile);
 
   if (method === 'GET') {
-    const objectName = `ipfs/${ipfsFile}`;
+    const objectName = `ipfs/${path}`;
     const object = await c.env.MY_BUCKET.get(objectName);
 
     // if r2 object not exists, fetch from ipfs gateway
     if (object === null) {
       const fetchIPFS = await Promise.any([
-        fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${ipfsFile}`),
-        fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${ipfsFile}`),
+        fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${path}`),
+        fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${path}`),
       ]);
       const statusCode = fetchIPFS.status;
 
@@ -48,7 +45,7 @@ app.all('/ipfs/*', async (c) => {
 
         // put object to cf-images
         const imageUrl = await uploadToCloudflareImages({
-          ipfsFile,
+          path,
           token: c.env.IMAGE_API_TOKEN,
           gateway: c.env.DEDICATED_GATEWAY,
           imageAccount: c.env.CF_IMAGE_ACCOUNT,
@@ -56,7 +53,7 @@ app.all('/ipfs/*', async (c) => {
         });
 
         if (imageUrl) {
-          return c.redirect(imageUrl);
+          return Response.redirect(imageUrl, 302);
         }
 
         // else, render r2 object
@@ -74,11 +71,11 @@ app.all('/ipfs/*', async (c) => {
       }
 
       // fallback to cf-ipfs
-      return c.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${ipfsFile}`);
+      return Response.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${path}`, 302);
     }
 
     if (!response) {
-      const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${ipfsFile}/public`;
+      const cfImage = `https://imagedelivery.net/${c.env.CF_IMAGE_ID}/${path}/public`;
       const currentImage = await fetch(cfImage, {
         method: 'HEAD',
         cf: CACHE_TTL_BY_STATUS,
@@ -86,12 +83,12 @@ app.all('/ipfs/*', async (c) => {
 
       // return early to cf-images
       if (currentImage.ok) {
-        return c.redirect(cfImage);
+        return Response.redirect(cfImage, 302);
       }
 
       // else, upload to cf-images
       const imageUrl = await uploadToCloudflareImages({
-        ipfsFile,
+        path,
         token: c.env.IMAGE_API_TOKEN,
         gateway: c.env.DEDICATED_GATEWAY,
         imageAccount: c.env.CF_IMAGE_ACCOUNT,
@@ -101,7 +98,7 @@ app.all('/ipfs/*', async (c) => {
       // redirect to cf-images
       if (imageUrl) {
         // how to cache redirect response?
-        return c.redirect(imageUrl);
+        return Response.redirect(imageUrl, 302);
       }
 
       // else, render r2 object and cache it
@@ -122,13 +119,13 @@ app.all('/ipfs/*', async (c) => {
   }
 
   if (method === 'HEAD') {
-    const objectName = `ipfs/${ipfsFile}`;
+    const objectName = `ipfs/${path}`;
     const object = await c.env.MY_BUCKET.get(objectName);
 
     if (object === null) {
       const fetchIPFS = await Promise.any([
-        fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${ipfsFile}`),
-        fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${ipfsFile}`),
+        fetch(`${c.env.DEDICATED_GATEWAY}/ipfs/${path}`),
+        fetch(`${c.env.DEDICATED_BACKUP_GATEWAY}/ipfs/${path}`),
       ]);
       const statusCode = fetchIPFS.status;
 
@@ -137,7 +134,7 @@ app.all('/ipfs/*', async (c) => {
       }
 
       // fallback to cf-ipfs
-      return c.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${ipfsFile}`);
+      return Response.redirect(`${c.env.CLOUDFLARE_GATEWAY}/ipfs/${path}`, 302);
     }
 
     const headers = new Headers();

@@ -8,15 +8,15 @@ importers:
   workers/cdn:
     specifiers:
       '@cloudflare/workers-types': ^3.18.0
-      hono: ^2.7.5
+      hono: ^2.7.1
       typescript: ^4.9.4
-      wrangler: ^2.9.0
+      wrangler: ^2.6.2
     dependencies:
-      hono: 2.7.5
+      hono: 2.7.1
     devDependencies:
       '@cloudflare/workers-types': 3.18.0
       typescript: 4.9.4
-      wrangler: 2.9.0
+      wrangler: 2.6.2
 
   workers/k-ipfs-assets:
     specifiers:
@@ -1185,7 +1185,7 @@ packages:
     dependencies:
       '@miniflare/core': 2.10.0
       '@miniflare/shared': 2.10.0
-      http-cache-semantics: 4.1.0
+      http-cache-semantics: 4.1.1
       undici: 5.9.1
     dev: true
 
@@ -1429,7 +1429,7 @@ packages:
       kleur: 4.1.5
       selfsigned: 2.1.1
       undici: 5.9.1
-      ws: 8.11.0
+      ws: 8.12.0
       youch: 2.2.2
     transitivePeerDependencies:
       - bufferutil
@@ -1806,7 +1806,7 @@ packages:
       '@miniflare/core': 2.10.0
       '@miniflare/shared': 2.10.0
       undici: 5.9.1
-      ws: 8.11.0
+      ws: 8.12.0
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -3149,8 +3149,8 @@ packages:
       function-bind: 1.1.1
     dev: true
 
-  /hono/2.7.5:
-    resolution: {integrity: sha512-UYrhUT1Xtalh7Xw/YGXee25wlWMiVIRfr0FbAJMEMyRpX9TFZ/6JKmVdCK7ioRnhAw7PfWBasjSBhdNXQ8/okQ==}
+  /hono/2.7.1:
+    resolution: {integrity: sha512-hx2pTusx2hD8IAiQfXXX9iapOuqGTJapqX3hg5a7bC7FQemFEiQfVNK/r5F4GnsdJB7AlsGT4ah9fIYh3vmJnw==}
     engines: {node: '>=16.0.0'}
     dev: false
 
@@ -5172,21 +5172,21 @@ packages:
       - utf-8-validate
     dev: true
 
-  /wrangler/2.9.0:
-    resolution: {integrity: sha512-5nyyR4bXKG/Rwz0dH+nOx4SWvJWmTZVSbceLyTV+ZOH1sd2vvPnnW14NUzTNEjY3XaT93XH+28mc5+UNSYsFHw==}
+  /wrangler/2.6.2:
+    resolution: {integrity: sha512-+in4oEQXDs6+vE+1c6niBd3IrW1DMRTbauR6G0u3TpD6UaXOLwLdBxRLEbN3m82dN+WNm7l1MbFZrKc/TnWjhw==}
     engines: {node: '>=16.13.0'}
     hasBin: true
     dependencies:
       '@cloudflare/kv-asset-handler': 0.2.0
       '@esbuild-plugins/node-globals-polyfill': 0.1.1_esbuild@0.14.51
       '@esbuild-plugins/node-modules-polyfill': 0.1.4_esbuild@0.14.51
-      '@miniflare/core': 2.11.0
-      '@miniflare/d1': 2.11.0
-      '@miniflare/durable-objects': 2.11.0
+      '@miniflare/core': 2.10.0
+      '@miniflare/d1': 2.10.0
+      '@miniflare/durable-objects': 2.10.0
       blake3-wasm: 2.1.5
       chokidar: 3.5.3
       esbuild: 0.14.51
-      miniflare: 2.11.0
+      miniflare: 2.10.0
       nanoid: 3.3.4
       path-to-regexp: 6.2.1
       selfsigned: 2.1.1
@@ -5264,19 +5264,6 @@ packages:
 
   /ws/8.10.0:
     resolution: {integrity: sha512-+s49uSmZpvtAsd2h37vIPy1RBusaLawVe8of+GyEPsaJTCMpj/2v8NpeK1SHXjBlQ95lQTmQofOJnFiLoaN3yw==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: ^5.0.2
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-    dev: true
-
-  /ws/8.11.0:
-    resolution: {integrity: sha512-HPG3wQd9sNQoT9xHyNCXoDUa+Xw/VevmY9FoHyQ+g+rrMn4j6FB4np7Z0OhdTgjx6MgQLK7jwSy1YecU1+4Asg==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1

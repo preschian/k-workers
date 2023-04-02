@@ -6,11 +6,10 @@ compatibility_date = "2023-01-03"
 DEDICATED_GATEWAY = 'https://r2.infura-ipfs.io'
 DEDICATED_BACKUP_GATEWAY = 'https://r2-backup.infura-ipfs.io'
 CLOUDFLARE_GATEWAY = 'https://cloudflare-ipfs.com'
-BUCKET_PUBLIC_URL = 'https://pub-2562b2b70bfc41f79f5781b04647fb70.r2.dev'
 CF_IMAGE_ACCOUNT = '307ebd51f6c21a90c3873587c11a2913'
 CF_IMAGE_ID = 'fiV5JoD3FPU2zP0MrEGjlA'
 
 [[r2_buckets]]
 binding = 'MY_BUCKET'
-bucket_name = 'r2-assets'
-preview_bucket_name = 'test-ipfs-assets'
+bucket_name = 'stockpile'
+preview_bucket_name = 'alpha-stockpile'
