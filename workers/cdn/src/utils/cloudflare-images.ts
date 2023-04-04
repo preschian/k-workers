@@ -16,7 +16,7 @@ export async function uploadToCloudflareImages({
   // resize image using wsrv.nl
   const resizeImage = new URL('https://wsrv.nl');
   resizeImage.searchParams.append('url', imageOnIpfs);
-  resizeImage.searchParams.append('w', '600');
+  resizeImage.searchParams.append('w', '1400');
 
   console.log(resizeImage.toString());
 
@@ -42,6 +42,8 @@ export async function uploadToCloudflareImages({
     requestOptions
   );
   const uploadStatus = uploadCfImage.status;
+
+  console.log('uploadStatus', uploadStatus);
 
   // if image supported by cf-images or already exists, redirect to cf-images
   if (uploadStatus === 200 || uploadStatus === 409) {
